@@ -1,0 +1,80 @@
+version: 2
+
+sources:
+  - name: hidden_minds
+    description: >
+      Datos en bruto procedentes del INE (Instituto Nacional de Estadística).
+      Contiene tablas de salud mental, indicadores económicos y mercado laboral
+      cargadas manualmente mediante COPY INTO desde stage interno de Snowflake.
+    schema: HIDDEN_MINDS
+    database: "{{ env_var('DBT_ENVIRONMENTS', 'FAIL') }}_BRONZE_DB"
+    quoting:
+      database: false
+      schema: false
+      identifier: false
+
+    tables:
+      # ----------------------------------------------------------------------
+      # suicidios — Tasa de suicidio por CCAA, sexo y grupo de edad
+      # ----------------------------------------------------------------------
+      - name: suicidios
+        description: >
+          Tasa de suicidio por cada 100.000 habitantes, desglosada por
+          comunidad autónoma, grupo de edad, sexo y año. Fuente: INE.
+        columns:
+          - name: NACIONAL
+            description: Nivel nacional (siempre 'Total Nacional').
+          - name: CCAA
+            description: Comunidad autónoma.
+          - name: EDADES
+            description: Grupo de edad.
+          - name: SEXO
+            description: Sexo (Hombres, Mujeres, Ambos sexos).
+          - name: PERIODO
+            description: Año del dato.
+          - name: TOTAL
+            description: Tasa de suicidio por 100.000 habitantes (decimal con coma).
+
+      # ----------------------------------------------------------------------
+      # epa — Encuesta de Población Activa (tasa de paro trimestral)
+      # ----------------------------------------------------------------------
+      - name: epa
+        description: >
+          Tasa de paro trimestral por comunidad autónoma, sexo y grupo de edad.
+          Fuente: INE, Encuesta de Población Activa.
+        columns:
+          - name: SEXO
+            description: Sexo (Hombres, Mujeres, Ambos sexos).
+          - name: CCAA
+            description: Comunidad Autónoma.
+          - name: EDAD
+            description: Grupo de edad.
+          - name: PERIODO
+            description: Período trimestral (formato YYYYTQ, ej. 2024T1).
+          - name: TOTAL
+            description: Tasa de paro (decimal con coma).
+
+      # ----------------------------------------------------------------------
+      # pib_pc — PIB per cápita por comunidad autónoma
+      # ----------------------------------------------------------------------
+      - name: pib_pc
+        description: >
+          PIB per cápita en euros por comunidad autónoma y año (2018-2024).
+          Fuente: INE. Formato transpuesto con una columna por año.
+        columns:
+          - name: CCAA
+            description: Comunidad Autónoma.
+          - name: "2018"
+            description: PIB per cápita en euros, año 2018.
+          - name: "2019"
+            description: PIB per cápita en euros, año 2019.
+          - name: "2020"
+            description: PIB per cápita en euros, año 2020.
+          - name: "2021"
+            description: PIB per cápita en euros, año 2021.
+          - name: "2022"
+            description: PIB per cápita en euros, año 2022.
+          - name: "2023"
+            description: PIB per cápita en euros, año 2023.
+          - name: "2024"
+            description: PIB per cápita en euros, año 2024.
