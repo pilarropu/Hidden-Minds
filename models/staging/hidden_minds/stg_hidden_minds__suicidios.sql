@@ -1,5 +1,5 @@
 -- Renombrado, casteado y limpieza básica sobre el source suicidio, 
---filtro por filas de total nacional y convierto decimal con coma.
+-- filtro por filas de total nacional y convierto decimal con coma.
 
 with src_suicidios as (
     select *
@@ -17,6 +17,8 @@ renamed_casted as (
     where CCAA is not null
       and CCAA != ''
       and TOTAL != '-'
+      and SEXO != 'Total'
+      and GRUPO_EDAD != 'Todas las edades'
 )
 
 select * from renamed_casted
