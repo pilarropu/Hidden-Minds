@@ -1,0 +1,91 @@
+version: 2
+
+models:
+
+  # --------------------------------------------------------------------------
+  # stg_hidden_minds__suicidios
+  # --------------------------------------------------------------------------
+  - name: stg_hidden_minds__suicidios
+    description: >
+      Staging de la tasa de suicidio por cada 100.000 habitantes.
+      Renombrado, casteado y filtrado desde el source Bronze del INE.
+      Excluye totales nacionales, agregados de edad y sexo.
+    columns:
+      - name: comunidad_autonoma
+        description: Nombre de la comunidad autónoma.
+        data_tests:
+          - not_null
+      - name: grupo_edad
+        description: Grupo de edad del dato.
+        data_tests:
+          - not_null
+      - name: sexo
+        description: Sexo (Hombres, Mujeres).
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Hombres', 'Mujeres']
+      - name: anio
+        description: Año del dato.
+        data_tests:
+          - not_null
+      - name: tasa_por_100k
+        description: Tasa de suicidio por cada 100.000 habitantes.
+        data_tests:
+          - not_null
+
+  # --------------------------------------------------------------------------
+  # stg_hidden_minds__epa
+  # --------------------------------------------------------------------------
+  - name: stg_hidden_minds__epa
+    description: >
+      Staging de la tasa de paro trimestral por comunidad autónoma,
+      grupo de edad y sexo. Renombrado, casteado y filtrado desde
+      el source Bronze del INE. Excluye totales y agregados.
+    columns:
+      - name: comunidad_autonoma
+        description: Nombre de la comunidad autónoma.
+        data_tests:
+          - not_null
+      - name: grupo_edad
+        description: Grupo de edad del dato.
+        data_tests:
+          - not_null
+      - name: sexo
+        description: Sexo (Hombres, Mujeres).
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Hombres', 'Mujeres']
+      - name: anio
+        description: Año del dato.
+        data_tests:
+          - not_null
+      - name: tasa_paro
+        description: Tasa de paro en porcentaje.
+        data_tests:
+          - not_null
+
+  # --------------------------------------------------------------------------
+  # stg_hidden_minds__pib_pc
+  # --------------------------------------------------------------------------
+  - name: stg_hidden_minds__pib_pc
+    description: >
+      Staging del PIB per cápita por comunidad autónoma y año.
+      Normalizado desde formato transpuesto (una columna por año)
+      a formato largo (una fila por año). Fuente: INE.
+    columns:
+      - name: comunidad_autonoma
+        description: Nombre de la comunidad autónoma.
+        data_tests:
+          - not_null
+      - name: anio
+        description: Año del dato.
+        data_tests:
+          - not_null
+      - name: pib_per_capita
+        description: PIB per cápita en euros.
+        data_tests:
+          - not_null
