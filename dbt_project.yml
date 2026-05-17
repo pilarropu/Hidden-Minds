@@ -44,4 +44,9 @@ models:
       core:
         +materialized: table
 
+seeds:
+  hidden_minds:
+    ccaa:
+      +delimiter: ";"
+
 

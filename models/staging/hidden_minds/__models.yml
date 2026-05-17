@@ -13,26 +13,26 @@ models:
     columns:
       - name: comunidad_autonoma
         description: Nombre de la comunidad autónoma.
-        data_tests:
+        tests:
           - not_null
       - name: grupo_edad
         description: Grupo de edad del dato.
-        data_tests:
+        tests:
           - not_null
       - name: sexo
         description: Sexo (Hombres, Mujeres).
-        data_tests:
+        tests:
           - not_null
           - accepted_values:
               arguments:
                 values: ['Hombres', 'Mujeres']
       - name: anio
         description: Año del dato.
-        data_tests:
+        tests:
           - not_null
       - name: tasa_por_100k
         description: Tasa de suicidio por cada 100.000 habitantes.
-        data_tests:
+        tests:
           - not_null
 
   # --------------------------------------------------------------------------
@@ -46,26 +46,26 @@ models:
     columns:
       - name: comunidad_autonoma
         description: Nombre de la comunidad autónoma.
-        data_tests:
+        tests:
           - not_null
       - name: grupo_edad
         description: Grupo de edad del dato.
-        data_tests:
+        tests:
           - not_null
       - name: sexo
         description: Sexo (Hombres, Mujeres).
-        data_tests:
+        tests:
           - not_null
           - accepted_values:
               arguments:
                 values: ['Hombres', 'Mujeres']
       - name: anio
         description: Año del dato.
-        data_tests:
+        tests:
           - not_null
       - name: tasa_paro
         description: Tasa de paro en porcentaje.
-        data_tests:
+        tests:
           - not_null
 
   # --------------------------------------------------------------------------
@@ -79,13 +79,40 @@ models:
     columns:
       - name: comunidad_autonoma
         description: Nombre de la comunidad autónoma.
-        data_tests:
+        tests:
           - not_null
       - name: anio
         description: Año del dato.
-        data_tests:
+        tests:
           - not_null
       - name: pib_per_capita
         description: PIB per cápita en euros.
-        data_tests:
+        tests:
           - not_null
+  # --------------------------------------------------------------------------
+  # stg_hidden_minds__ccaa
+  # --------------------------------------------------------------------------
+  
+  - name: stg_hidden_minds__ccaa
+    description: >
+      Datos de comunidad autónoma.
+    columns:
+      - name: id_comunidad
+        description: Surrogate key MD5. PK de la dimensión.
+        tests:
+          - unique
+          - not_null
+      - name: codigo_ine
+        description: Código oficial INE de la comunidad autónoma.
+        tests:
+          - not_null
+      - name: nombre
+        description: Nombre oficial de la comunidad autónoma.
+        tests:
+          - not_null
+      - name: region_geografica
+        description: Agrupación geográfica de la comunidad autónoma.
+        tests:
+          - not_null
+
+
