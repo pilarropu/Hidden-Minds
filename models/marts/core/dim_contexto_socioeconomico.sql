@@ -1,58 +1,46 @@
 
 
-with epa as (
+with indicadores as (
+    select * from {{ ref('stg_indicador_socioeconomico') }}
+),
+
+tipo as (
+    select * from {{ ref('stg_tipo_indicador') }}
+),
+
+paro as (
     select
-          comunidad_autonoma
-        , anio
-        , round(avg(tasa_paro), 2)   as tasa_paro
-    from {{ ref('stg_hidden_minds__epa') }}
-    group by comunidad_autonoma, anio
+          i.id_comunidad
+        , i.id_periodo
+        , avg(i.valor)   as tasa_paro
+    from indicadores i
+    inner join tipo t on t.id_tipo_indicador = i.id_tipo_indicador
+                     and t.nombre_indicador = 'Tasa de paro'
+    group by i.id_comunidad, i.id_periodo
 ),
 
 pib as (
     select
-          comunidad_autonoma
-        , anio
-        , pib_per_capita
-    from {{ ref('stg_hidden_minds__pib_pc') }}
-),
-
-ccaa as (
-    select * from {{ ref('ccaa') }}
-),
-
-joined as (
-    select
-          ccaa.id_comunidad
-        , epa.anio
-        , epa.tasa_paro
-        , pib.pib_per_capita
-    from ccaa
-    left join epa on epa.comunidad_autonoma = ccaa.nombre_ine
-    left join pib on pib.comunidad_autonoma = ccaa.nombre_ine
-               and pib.anio = epa.anio
+          i.id_comunidad
+        , i.id_periodo
+        , avg(i.valor)   as pib_per_capita
+    from indicadores i
+    inner join tipo t on t.id_tipo_indicador = i.id_tipo_indicador
+                     and t.nombre_indicador = 'PIB per cápita'
+    group by i.id_comunidad, i.id_periodo
 ),
 
 final as (
     select
-          row_number() over (order by id_comunidad, anio)  as id_dim_contexto
-        , id_comunidad
-        , anio                                             as id_periodo
-        , tasa_paro
-        , pib_per_capita
-        , case
-            when tasa_paro >= 20 then 'Alto'
-            when tasa_paro >= 10 then 'Medio'
-            else                      'Bajo'
-          end                                             as nivel_paro
-        , case
-            when pib_per_capita >= 30000 then 'Alto'
-            when pib_per_capita >= 20000 then 'Medio'
-            else                               'Bajo'
-          end                                             as nivel_renta
-    from joined
-    where tasa_paro is not null
-       or pib_per_capita is not null
+          {{ dbt_utils.generate_surrogate_key(['paro.id_comunidad', 'paro.id_periodo']) }}  as id_contexto
+        , paro.id_comunidad
+        , paro.id_periodo
+        , paro.tasa_paro
+        , pib.pib_per_capita
+        , {{ clasificar_riesgo('paro.tasa_paro') }}     as nivel_paro
+    from paro
+    left join pib on pib.id_comunidad = paro.id_comunidad
+                 and pib.id_periodo   = paro.id_periodo
 )
 
 select * from final

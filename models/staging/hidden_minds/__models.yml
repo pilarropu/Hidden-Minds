@@ -90,15 +90,15 @@ models:
         tests:
           - not_null
   # --------------------------------------------------------------------------
-  # stg_hidden_minds__ccaa
+  # stg_ccaa
   # --------------------------------------------------------------------------
   
-  - name: stg_hidden_minds__ccaa
+  - name: stg_ccaa
     description: >
       Datos de comunidad autónoma.
     columns:
       - name: id_comunidad
-        description: Surrogate key MD5. PK de la dimensión.
+        description: Surrogate key. PK de la tabla.
         tests:
           - unique
           - not_null
@@ -115,4 +115,300 @@ models:
         tests:
           - not_null
 
+  # --------------------------------------------------------------------------
+  # stg_periodo
+  # --------------------------------------------------------------------------
 
+  - name: stg_periodo
+    description: >
+      Catálogo de períodos únicos consolidado de todas las fuentes.
+      Clasifica cada año según el contexto de la pandemia.
+    columns:
+      - name: id_periodo
+        description: Surrogate key. PK de la tabla.
+        tests:
+          - unique
+          - not_null
+      - name: anio
+        description: Año del dato.
+        tests:
+          - unique
+          - not_null
+      - name: periodo_pandemia
+        description: Clasificación del año según contexto pandémico.
+        tests:
+          - not_null
+          
+  # --------------------------------------------------------------------------
+  # stg_sexo
+  # --------------------------------------------------------------------------
+
+
+  - name: stg_sexo
+    description: >
+      Clasificación del género extraído de los datos de suicidios.
+    columns:
+      - name: id_sexo
+        description: Surrogate key. PK de la tabla.
+        tests:
+          - unique
+          - not_null
+      - name: nombre
+        description: Nombre del sexo (Hombres / Mujeres).
+        tests:
+          - unique
+          - not_null
+
+  # --------------------------------------------------------------------------
+  # stg_grupo_edad
+  # --------------------------------------------------------------------------
+
+  - name: stg_grupo_edad
+    description: >
+      Grupos de edad consolidados de suicidios y EPA.
+      Incluye rangos numéricos de edad mínima y máxima.
+    columns:
+      - name: id_grupo_edad
+        description: Surrogate key. PK de la tabla.
+        tests:
+          - unique
+          - not_null
+      - name: rango_edad
+        description: Descripción textual del grupo de edad.
+        tests:
+          - unique
+          - not_null
+      - name: edad_min
+        description: Edad mínima del grupo.
+        tests:
+          - not_null
+      - name: edad_max
+        description: Edad máxima del grupo.
+        tests:
+          - not_null
+
+  # --------------------------------------------------------------------------
+  # stg_tipo_indicador
+  # --------------------------------------------------------------------------
+
+  - name: stg_tipo_indicador
+    description: >
+      Catálogo de tipos de indicador socioeconómico disponibles.
+    columns:
+      - name: id_tipo_indicador
+        description: Surrogate key. PK de la tabla.
+        tests:
+          - unique
+          - not_null
+      - name: nombre_indicador
+        description: Nombre descriptivo del indicador.
+        tests:
+          - unique
+          - not_null
+      - name: unidad
+        description: Unidad de medida del indicador.
+        tests:
+          - not_null
+      - name: categoria
+        description: Categoría temática del indicador.
+        tests:
+          - not_null
+
+  # --------------------------------------------------------------------------
+  # stg_ods_meta
+  # --------------------------------------------------------------------------
+
+  - name: stg_ods_meta
+    description: >
+      Metas de Obejtivos de Desarrollo Sostenible relevantes para el proyecto: ODS 3 (salud), ODS 8 (empleo) y ODS 10 (desigualdad).
+    columns:
+      - name: id_meta
+        description: Surrogate key. PK de la tabla.
+        tests:
+          - unique
+          - not_null
+      - name: numero_ods
+        description: Número del objetivo de desarrollo sostenible.
+        tests:
+          - not_null
+      - name: numero_meta
+        description: Número de la meta dentro del ODS.
+        tests:
+          - not_null
+      - name: descripcion
+        description: Descripción de la meta ODS.
+        tests:
+          - not_null
+      - name: indicador_ods
+        description: Indicador de seguimiento de la meta.
+        tests:
+          - not_null
+      - name: unidad_medida
+        description: Unidad de medida del indicador.
+        tests:
+          - not_null
+      - name: valor_objetivo_2030
+        description: Valor objetivo a alcanzar en 2030.
+        tests:
+          - not_null
+  
+  
+  # --------------------------------------------------------------------------
+  # stg_mortalidad_suicidio
+  # --------------------------------------------------------------------------
+
+
+  - name: stg_mortalidad_suicidio
+    description: >
+      Tabla de hechos de mortalidad por suicidio por CCAA, año, sexo
+      y grupo de edad.
+    columns:
+      - name: id_mortalidad
+        description: Surrogate key. PK de la tabla.
+        tests:
+          - unique
+          - not_null
+      - name: id_comunidad
+        description: FK a stg_ccaa.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_ccaa')
+                field: id_comunidad
+      - name: id_periodo
+        description: FK a stg_periodo.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_periodo')
+                field: id_periodo
+      - name: id_sexo
+        description: FK a stg_sexo.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_sexo')
+                field: id_sexo
+      - name: id_grupo_edad
+        description: FK a stg_grupo_edad.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_grupo_edad')
+                field: id_grupo_edad
+      - name: tasa_por_100k
+        description: Tasa de suicidio por cada 100.000 habitantes.
+        tests:
+          - not_null
+
+  # --------------------------------------------------------------------------
+  # stg_indicador_socieconomico
+  # --------------------------------------------------------------------------
+
+  - name: stg_indicador_socioeconomico
+    description: >
+      Tabla de hechos de indicadores socioeconómicos en formato largo.
+      Une tasa de paro (EPA) y PIB per cápita con granularidad
+      CCAA + año + sexo + grupo_edad + tipo_indicador.
+    columns:
+      - name: id_indicador
+        description: Surrogate key. PK de la tabla.
+        tests:
+          - unique
+          - not_null
+      - name: id_comunidad
+        description: FK a stg_ccaa.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_ccaa')
+                field: id_comunidad
+      - name: id_periodo
+        description: FK a stg_periodo.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_periodo')
+                field: id_periodo
+      - name: id_sexo
+        description: FK a stg_sexo.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_sexo')
+                field: id_sexo
+      - name: id_grupo_edad
+        description: FK a stg_grupo_edad.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_grupo_edad')
+                field: id_grupo_edad
+      - name: id_tipo_indicador
+        description: FK a stg_tipo_indicador.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_tipo_indicador')
+                field: id_tipo_indicador
+      - name: valor
+        description: Valor del indicador (tasa de paro en % o PIB en euros).
+        tests:
+          - not_null
+
+  # --------------------------------------------------------------------------
+  # stg_seguimiento_ods
+  # --------------------------------------------------------------------------
+
+  - name: stg_seguimiento_ods
+    description: >
+      Tabla de hechos de seguimiento de metas ODS por CCAA y año.
+      Relaciona los valores actuales de cada indicador con los
+      objetivos de la Agenda 2030.
+    columns:
+      - name: id_seguimiento
+        description: Surrogate key. PK de la tabla.
+        tests:
+          - unique
+          - not_null
+      - name: id_comunidad
+        description: FK a stg_ccaa.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_ccaa')
+                field: id_comunidad
+      - name: id_periodo
+        description: FK a stg_periodo.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_periodo')
+                field: id_periodo
+      - name: id_meta
+        description: FK a stg_ods_meta.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_ods_meta')
+                field: id_meta
+      - name: valor_indicador
+        description: Valor actual del indicador para esa CCAA y año.
+        tests:
+          - not_null
+      - name: valor_objetivo
+        description: Valor objetivo de la meta ODS para 2030.
+        tests:
+          - not_null

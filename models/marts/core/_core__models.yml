@@ -1,0 +1,187 @@
+version: 2
+
+models:
+
+  # --------------------------------------------------------------------------
+  # dim_comunidad
+  # --------------------------------------------------------------------------
+  - name: dim_comunidad
+    description: >
+      Dimensión de comunidad autónoma. Fuente de verdad territorial
+      para todos los análisis del proyecto.
+    columns:
+      - name: id_comunidad
+        description: Surrogate key. PK de la dimensión.
+        tests:
+          - unique
+          - not_null
+      - name: codigo_ine
+        description: Código oficial INE de la comunidad autónoma.
+        tests:
+          - not_null
+      - name: nombre
+        description: Nombre oficial de la comunidad autónoma.
+        tests:
+          - not_null
+      - name: region_geografica
+        description: Agrupación geográfica de la comunidad autónoma.
+        tests:
+          - not_null
+
+
+# --------------------------------------------------------------------------
+# dim_periodo
+# --------------------------------------------------------------------------
+  - name: dim_periodo
+    description: >
+      Dimensión de tiempo con años únicos consolidados de todas las fuentes.
+      Clasifica cada año según el contexto de la pandemia.
+    columns:
+      - name: id_periodo
+        description: Surrogate key. PK de la dimensión.
+        tests:
+          - unique
+          - not_null
+      - name: anio
+        description: Año del dato.
+        tests:
+          - unique
+          - not_null
+      - name: periodo_pandemia
+        description: Clasificación del año (Pre-pandemia / Pandemia / Post-pandemia).
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Pre-pandemia', 'Pandemia', 'Post-pandemia']
+
+# --------------------------------------------------------------------------
+# dim_demografia
+# --------------------------------------------------------------------------
+  - name: dim_demografia
+    description: >
+      Dimensión demográfica combinada de sexo y grupo de edad.
+      Granularidad: una fila por combinación de sexo y grupo de edad.
+    columns:
+      - name: id_demografia
+        description: Surrogate key. PK de la dimensión.
+        tests:
+          - unique
+          - not_null
+      - name: id_sexo
+        description: FK a stg_sexo.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_sexo')
+                field: id_sexo
+      - name: id_grupo_edad
+        description: FK a stg_grupo_edad.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_grupo_edad')
+                field: id_grupo_edad
+      - name: sexo
+        description: Nombre del sexo (Hombres / Mujeres).
+        tests:
+          - not_null
+      - name: rango_edad
+        description: Descripción textual del grupo de edad.
+        tests:
+          - not_null
+      - name: edad_min
+        description: Edad mínima del grupo.
+        tests:
+          - not_null
+      - name: edad_max
+        description: Edad máxima del grupo.
+        tests:
+          - not_null
+
+# --------------------------------------------------------------------------
+# dim_contexto_socioeconomico
+# --------------------------------------------------------------------------
+  - name: dim_contexto_socioeconomico
+    description: >
+      Dimensión de contexto socioeconómico por CCAA y año.
+      Incluye tasa de paro, PIB per cápita y niveles cualitativos calculados.
+    columns:
+      - name: id_contexto
+        description: Surrogate key. PK de la dimensión.
+        tests:
+          - unique
+          - not_null
+      - name: id_comunidad
+        description: FK a dim_comunidad.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_comunidad')
+                field: id_comunidad
+      - name: id_periodo
+        description: FK a dim_periodo.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_periodo')
+                field: id_periodo
+      - name: tasa_paro
+        description: Tasa de paro media anual en porcentaje.
+        tests:
+          - not_null
+      - name: pib_per_capita
+        description: PIB per cápita en euros.
+        tests:
+          - not_null
+      - name: nivel_paro
+        description: Clasificación cualitativa de la tasa de paro.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Crítico', 'Alto', 'Medio', 'Bajo']
+
+# --------------------------------------------------------------------------
+# dim_ods
+# --------------------------------------------------------------------------
+  - name: dim_ods
+    description: >
+      Dimensión de metas ODS relevantes para el proyecto.
+      Cubre ODS 3 (salud), ODS 8 (empleo) y ODS 10 (desigualdad).
+    columns:
+      - name: id_meta
+        description: Surrogate key MD5. PK de la dimensión.
+        tests:
+          - unique
+          - not_null
+      - name: numero_ods
+        description: Número del objetivo de desarrollo sostenible.
+        tests:
+          - not_null
+      - name: numero_meta
+        description: Número de la meta dentro del ODS.
+        tests:
+          - not_null
+      - name: descripcion
+        description: Descripción de la meta ODS.
+        tests:
+          - not_null
+      - name: indicador_ods
+        description: Indicador de seguimiento de la meta.
+        tests:
+          - not_null
+      - name: unidad_medida
+        description: Unidad de medida del indicador.
+        tests:
+          - not_null
+      - name: valor_objetivo_2030
+        description: Valor objetivo a alcanzar en 2030.
+        tests:
+          - not_null
+
+          

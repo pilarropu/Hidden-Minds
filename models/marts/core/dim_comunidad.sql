@@ -1,17 +1,16 @@
 
 
-with src_ccaa as (
-    select *
-    from {{ ref('ccaa') }}
+with src as (
+    select * from {{ ref('stg_ccaa') }}
 ),
 
 final as (
     select
-          id_comunidad                                    as id_dim_comunidad
+          id_comunidad
         , codigo_ine
-        , nombre                                          as nombre
+        , nombre
         , region_geografica
-    from src_ccaa
+    from src
 )
 
 select * from final

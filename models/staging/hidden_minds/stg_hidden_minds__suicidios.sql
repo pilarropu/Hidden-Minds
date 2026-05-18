@@ -3,8 +3,7 @@
 
 
 with src_suicidios as (
-    select *
-    from {{ source('hidden_minds', 'suicidios') }}
+    select * from {{ source('hidden_minds', 'suicidios') }}
 ),
 
 ccaa as (
@@ -13,7 +12,7 @@ ccaa as (
 
 renamed_casted as (
     select
-          ccaa.id_comunidad
+          {{ dbt_utils.generate_surrogate_key(['ccaa.id_comunidad']) }}  as id_comunidad
         , ccaa.nombre                                     as comunidad_autonoma
         , src.EDADES                                      as grupo_edad
         , src.SEXO                                        as sexo
