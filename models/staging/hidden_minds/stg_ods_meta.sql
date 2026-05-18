@@ -1,12 +1,12 @@
 
 
 with src as (
-    select * from {{ ref('stg_ods_meta') }}
+    select * from {{ ref('ods_meta') }}
 ),
 
 final as (
     select
-          id_meta
+          {{ dbt_utils.generate_surrogate_key(['id_meta']) }}  as id_meta
         , numero_ods
         , numero_meta
         , descripcion

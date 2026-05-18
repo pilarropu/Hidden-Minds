@@ -1,0 +1,26 @@
+version: 2
+
+snapshots:
+  - name: snp_tipo_indicador
+    description: >
+      Snapshot SCD Type 2 sobre stg_tipo_indicador.
+      Registra el historial de cambios en los tipos de indicador
+      socioeconómico. Si cambia el nombre, unidad o categoría de un
+      indicador se conserva la versión anterior con su fecha de expiración.
+    columns:
+      - name: id_tipo_indicador
+        description: Surrogate key. Clave única del registro.
+      - name: nombre_indicador
+        description: Nombre del indicador vigilado por SCD2.
+      - name: unidad
+        description: Unidad de medida vigilada por SCD2.
+      - name: categoria
+        description: Categoría temática vigilada por SCD2.
+      - name: dbt_scd_id
+        description: ID único generado por dbt para cada versión del registro.
+      - name: dbt_updated_at
+        description: Timestamp de la última actualización detectada por dbt.
+      - name: dbt_valid_from
+        description: Fecha desde la que es válida esta versión del registro.
+      - name: dbt_valid_to
+        description: Fecha hasta la que fue válida esta versión. NULL si es la versión actual.

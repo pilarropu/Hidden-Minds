@@ -1,12 +1,10 @@
-
-
 with src as (
-    select * from {{ ref('stg_ccaa') }}
+    select * from {{ ref('ccaa') }}
 ),
 
 final as (
     select
-          id_comunidad
+          {{ dbt_utils.generate_surrogate_key(['id_comunidad']) }}  as id_comunidad
         , codigo_ine
         , nombre
         , region_geografica

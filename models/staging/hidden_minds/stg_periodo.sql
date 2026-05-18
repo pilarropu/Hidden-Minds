@@ -1,5 +1,4 @@
 
-
 with anos_suicidios as (
     select distinct anio
     from {{ ref('stg_hidden_minds__suicidios') }}
@@ -25,13 +24,13 @@ unificado as (
 
 final as (
     select
-          row_number() over (order by anio)   as id_dim_tiempo
+          {{ dbt_utils.generate_surrogate_key(['anio']) }}  as id_periodo
         , anio
         , case
-            when anio between 2020 and 2022 then 'Pandemia'
-            when anio < 2020                then 'Pre-pandemia'
-            else                                 'Post-pandemia'
-          end                                as periodo_pandemia
+            when anio < 2020    then 'Pre-pandemia'
+            when anio <= 2022   then 'Pandemia'
+            else                     'Post-pandemia'
+          end                                               as periodo_pandemia
     from unificado
 )
 
