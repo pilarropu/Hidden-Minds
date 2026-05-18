@@ -33,9 +33,7 @@ models:
 seeds:
   +schema: hidden_minds
   +database: "{{ env_var('DBT_ENVIRONMENTS', 'FAIL') }}_BRONZE_DB"
-  hidden_minds:
-    ccaa:
-      +delimiter: ";"
+
 
 snapshots:
   +transient: false
