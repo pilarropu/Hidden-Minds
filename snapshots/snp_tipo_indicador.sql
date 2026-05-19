@@ -1,8 +1,8 @@
-{% snapshot scd_tipo_indicador %}
-
+{% snapshot snp_tipo_indicador %}
 {{
     config(
-        target_schema='dbt_prodriguez',
+        target_database=env_var('DBT_ENVIRONMENTS', 'FAIL') ~ '_SILVER_DB',
+        target_schema='snapshots',
         unique_key='id_tipo_indicador',
         strategy='check',
         check_cols=['nombre_indicador', 'unidad', 'categoria'],
