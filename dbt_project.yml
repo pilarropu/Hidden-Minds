@@ -17,7 +17,6 @@ clean-targets:
   - "dbt_packages"
 
 models:
-  +transient: false
   hidden_minds:
     staging:
       +materialized: view
