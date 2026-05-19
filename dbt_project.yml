@@ -24,6 +24,7 @@ models:
       +database: "{{ env_var('DBT_ENVIRONMENTS', 'FAIL') }}_SILVER_DB"
       hidden_minds:
         +schema: hidden_minds
+    
     marts:
       +materialized: table
       +database: "{{ env_var('DBT_ENVIRONMENTS', 'FAIL') }}_GOLD_DB"

@@ -1,6 +1,7 @@
 {% snapshot snp_tipo_indicador %}
 {{
     config(
+        target_database=env_var('DBT_ENVIRONMENTS', 'FAIL') ~ '_SILVER_DB',
         target_schema='snapshots',
         unique_key='id_tipo_indicador',
         strategy='check',
