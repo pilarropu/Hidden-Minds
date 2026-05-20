@@ -31,7 +31,7 @@ models:
         +schema: core
 
 seeds:
-  +schema: seed_data
+  +schema: hidden_minds
   +database: "{{ env_var('DBT_ENVIRONMENTS', 'FAIL') }}_BRONZE_DB"
 
 
